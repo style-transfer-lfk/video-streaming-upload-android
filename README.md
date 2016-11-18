@@ -1,2 +1,2 @@
 # video-streaming
-App for downloading/uploading video stream
+App for sendig a video stream through rtmp by using JavaCV (ffmpeg)
