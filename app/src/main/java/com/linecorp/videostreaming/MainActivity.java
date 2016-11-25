@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private final static String CLASS_LABEL = "RecordActivity";
     private final static String LOG_TAG = CLASS_LABEL;
-    private final static String RTMP_SERVER = "rtmp://54.250.150.154/live/test";
+    private final static String RTMP_SERVER = "rtmp://54.238.222.71/live/test";
 
     long startTime = 0;
     boolean recording = false;
@@ -116,7 +116,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         public void onClick(View view) {
             filterMode = ((Button) view).getText().toString();
             currentMode.setText(filterMode);
-            new HttpGetTask().execute(String.format("http://54.250.150.154:8080/style/%s", filterMode));
+            new HttpGetTask().execute(String.format("http://54.238.222.71:8080/style/%s", filterMode));
         }
     };
 
@@ -128,6 +128,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.tf_seurat).setOnClickListener(listener);
         findViewById(R.id.tf_composition).setOnClickListener(listener);
         findViewById(R.id.tf_original).setOnClickListener(listener);
+        findViewById(R.id.tf_hokusai).setOnClickListener(listener);
+        findViewById(R.id.tf_kandinsky).setOnClickListener(listener);
 
         /* get size of screen */
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
