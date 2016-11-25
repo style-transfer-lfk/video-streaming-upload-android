@@ -25,16 +25,23 @@
             android:text="Start" />
 
         <Button
+            android:id="@+id/tf_original"
+            android:text="original"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
             android:id="@+id/tf_seurat"
-            android:text="Seurat"
+            android:text="seurat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/tf_composition"
-            android:text="Composition"
+            android:text="composition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
 
     </LinearLayout>
 

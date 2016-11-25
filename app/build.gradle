@@ -27,6 +27,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.squareup.okhttp3:okhttp:3.4.2'
     compile 'com.android.support:appcompat-v7:22.0.0'
     testCompile 'junit:junit:4.12'
     compile files('libs/ffmpeg-android-arm.jar')
@@ -34,4 +35,5 @@ dependencies {
     compile files('libs/javacv.jar')
     compile files('libs/opencv-android-arm.jar')
     compile files('libs/opencv.jar')
+
 }

@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -21,10 +22,17 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.apache.http.HttpConnection;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Collections;
@@ -35,7 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private final static String CLASS_LABEL = "RecordActivity";
     private final static String LOG_TAG = CLASS_LABEL;
-    private final static String RTMP_SERVER = "rtmp://54.238.212.130/live/test";
+    private final static String RTMP_SERVER = "rtmp://54.250.150.154/live/test";
 
     long startTime = 0;
     boolean recording = false;
@@ -46,8 +54,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isPreviewOn = false;
 
     private int sampleAudioRateInHz = 44100;
-    private int imageWidth = 176;
-    private int imageHeight = 144;
+    private int imageWidth = 352;
+    private int imageHeight = 288;
     private int frameRate = 30;
 
     /* audio data getting thread */
@@ -74,6 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private int screenWidth, screenHeight;
     private Button btnRecorderControl;
     private TextView currentMode;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,10 +114,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            stopRecording();
             filterMode = ((Button) view).getText().toString();
             currentMode.setText(filterMode);
-            startRecording();
+            new HttpGetTask().execute(String.format("http://54.250.150.154:8080/style/%s", filterMode));
         }
     };
 
@@ -119,6 +127,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         currentMode = (TextView) findViewById(R.id.current_mode);
         findViewById(R.id.tf_seurat).setOnClickListener(listener);
         findViewById(R.id.tf_composition).setOnClickListener(listener);
+        findViewById(R.id.tf_original).setOnClickListener(listener);
 
         /* get size of screen */
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -324,14 +333,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             // Pick the first preview size that is equal or bigger, or pick the last (biggest) option if we cannot
             // reach the initial settings of imageWidth/imageHeight.
-            for (int i = 0; i < sizes.size(); i++) {
-                if ((sizes.get(i).width >= imageWidth && sizes.get(i).height >= imageHeight) || i == sizes.size() - 1) {
-                    imageWidth = sizes.get(i).width;
-                    imageHeight = sizes.get(i).height;
-                    Log.v(LOG_TAG, "Changed to supported resolution: " + imageWidth + "x" + imageHeight);
-                    break;
-                }
-            }
+//            for (int i = 0; i < sizes.size(); i++) {
+//                if ((sizes.get(i).width >= imageWidth && sizes.get(i).height >= imageHeight) || i == sizes.size() - 1) {
+//                    imageWidth = sizes.get(i).width;
+//                    imageHeight = sizes.get(i).height;
+//                    Log.v(LOG_TAG, "Changed to supported resolution: " + imageWidth + "x" + imageHeight);
+//                    break;
+//                }
+//            }
             camParams.setPreviewSize(imageWidth, imageHeight);
 
             Log.v(LOG_TAG,"Setting imageWidth: " + imageWidth + " imageHeight: " + imageHeight + " frameRate: " + frameRate);
@@ -418,6 +427,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
             stopRecording();
             Log.w(LOG_TAG, "Stop Button Pushed");
             btnRecorderControl.setText("Start");
+        }
+    }
+
+    private class HttpGetTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            try {
+                URL url = new URL(urls[0]);
+                HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+                httpConnection.connect();
+                int response = httpConnection.getResponseCode();
+                return "Response Code = " + response ;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "";
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
         }
     }
 }
